@@ -1,10 +1,6 @@
-use std::ffi::OsStr;
-use std::ffi::OsString;
-use std::path::PathBuf;
+// use cyonix::Cyonix;
 
-use cyonix::Cyonix;
-
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand, ValueEnum};
 
 /// Dotfile farm manager
 #[derive(Debug, Parser)]
@@ -22,7 +18,6 @@ enum Commands {
         /// Path to file
         file: String,
     },
-    
     // Git {
     //     init: bool,
     //
@@ -33,13 +28,12 @@ enum Commands {
 fn main() {
     let args = Cli::parse();
 
-    // TODO (@phoenixifier & @katsuki-yuri): Create config parser
-    
-    let instance = Cyonix::new();
-    
+    // let instance = Cyonix::new();
+
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
+            println!("{:?}", directories::UserDirs::new().unwrap().home_dir())
         }
     }
 }

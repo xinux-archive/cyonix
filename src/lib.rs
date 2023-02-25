@@ -1,56 +1,36 @@
-use std::path::Path;
-
+mod config;
 mod linker;
 
-#[cfg(target_os = "macos")]
-pub const PATHWAY: &str = "/.cyonix";
+use config::Config;
+use std::path::{Path, PathBuf};
 
-#[cfg(target_os = "windows")]
-pub const PATHWAY: &str = "AppData/Roaming/cyonix";
-
-#[cfg(target_os = "linux")]
-pub const PATHWAY: &str = "/.cyonix";
-
-// concat!(home.path() + PATHWAY);
-
-#[derive(Default)]
-struct Config {
-  files: Vec<&'static str>
-}
-
-impl Config {
-  pub fn new() -> Config {
-    Config {
-      files: Vec::new()
-    }
-  }
-}
-
-#[derive(Default)]
+#[derive(Debug)]
 pub struct Cyonix {
-  config: Config
+    config: Config,
+}
+
+impl Default for Cyonix {
+    fn default() -> Self {
+        let location = home::home_dir().unwrap();
+
+        Cyonix {
+            config: Config::new(&location),
+        }
+    }
 }
 
 impl Cyonix {
-  pub fn new() -> Cyonix {
-    Cyonix {
-      config: Config::new()
+    // move files to .cyonix
+    pub fn move_file(&self, file: &str) {
+        let path: &Path = Path::new(file);
+
+        if path.exists() {
+            std::fs::copy(file, format!("{}{}", PATHWAY, file)).expect("Failed to copy file");
+            std::fs::remove_file(file).expect("Failed to remove file");
+        }
     }
-  }
-  
-  // move files to .cyonix
-  pub fn move_file(&self, file: &str) {
-    let path: &Path = Path::new(file);
-    
-    if path.exists() {
-      std::fs::copy(file, format!("{}{}", PATHWAY, file)).expect("Failed to copy file");
-      std::fs::remove_file(file).expect("Failed to remove file");
+
+    pub fn add(&self, file: &str) {
+        self.move_file(file);
     }
-    
-    
-  }
-  
-  pub fn add(&self, file: &str) {
-    self.move_file(file);
-  }
 }
