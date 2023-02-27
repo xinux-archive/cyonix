@@ -29,12 +29,13 @@ pub struct Config {
 
 impl Config {
     pub fn new(path: &Path) -> Config {
-        let path = Path::new(
+        let full_path =
           format!("{}/{}/{}",
-                  path.to_str().unwrap(),
                   PATHWAY,
-                  FILE
-          ).as_str());
+                  FILE,
+                  path.to_str().unwrap()
+          );
+        let path = Path::new(&full_path);
         
         let mut list = String::new();
         

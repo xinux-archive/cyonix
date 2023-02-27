@@ -3,6 +3,7 @@ mod linker;
 
 use config::Config;
 use std::path::{Path, PathBuf};
+use config::PATHWAY;
 
 #[derive(Debug)]
 pub struct Cyonix {
