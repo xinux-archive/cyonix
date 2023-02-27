@@ -1,7 +1,6 @@
 // use cyonix::Cyonix;
 
-use clap::{Arg, Command, Parser, Subcommand, ValueEnum};
-use std::fs;
+use clap::{Parser, Subcommand, ValueEnum, Args};
 
 /// Dotfile farm manager
 #[derive(Debug, Parser)]
@@ -19,34 +18,55 @@ enum Commands {
         /// Path to file
         file: String,
     },
-    // Git {
-    //     init: bool,
-    //
-    //     push: bool,
-    // }
+    
+    /// Synchronize dotfiles with cloud
+    Git {
+        init: bool,
+        push: bool,
+    },
+    
+    /// Restoring and managing dotfiles
+    Restore {
+        file: Option<String>
+    }
 }
+
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+struct GitArgs {
+    #[command(subcommand)]
+    command: GitsCommands,
+}
+
+#[derive(Debug, Subcommand)]
+enum GitsCommands {
+    Push,
+    Pop,
+    Apply,
+}
+
 
 fn main() {
     let args = Cli::parse();
-
-    let instance = Command::new("cyonix")
-        .version("1.0.0")
-        .author("Phoenixifier")
-        .about(".file manager")
-        .subcommand(Command::new("add"))
-            .about("add files to storage");
-
-    match instance.get_matches().subcommand_name() {
-        Some("add") =>  match args.command {
-            Commands::Add { file } => {
-                println!("Cloning {file}");
-                println!("{:?}", home::home_dir());
+    
+    match args.command {
+        Commands::Add { file } => {
+            println!("Cloning {file}");
+        }
+        Commands::Git { init, push } => {
+            if init {
+                println!("Initializing git repo");
+            }
+            if push {
+                println!("Pushing to git repo");
             }
         }
-
-        _ => {
-            eprintln!("No subcommand provided");
-            std::process::exit(1);
+        Commands::Restore { file } => {
+            if let Some(file) = file {
+                println!("Restoring {file}");
+            } else {
+                println!("Restoring all files");
+            }
         }
     }
 }
