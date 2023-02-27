@@ -1,6 +1,6 @@
 // use cyonix::Cyonix;
 
-use clap::{Parser, Subcommand, ValueEnum, Args};
+use clap::{Parser, Subcommand, Args};
 
 /// Dotfile farm manager
 #[derive(Debug, Parser)]
@@ -20,10 +20,7 @@ enum Commands {
     },
     
     /// Synchronize dotfiles with cloud
-    Git {
-        init: bool,
-        push: bool,
-    },
+    Git(GitArgs),
     
     /// Restoring and managing dotfiles
     Restore {
@@ -40,9 +37,11 @@ struct GitArgs {
 
 #[derive(Debug, Subcommand)]
 enum GitsCommands {
+    /// Initialize git repo in dotfiles directory
+    Init,
+    
+    /// Push dotfiles to git repo
     Push,
-    Pop,
-    Apply,
 }
 
 
@@ -53,12 +52,14 @@ fn main() {
         Commands::Add { file } => {
             println!("Cloning {file}");
         }
-        Commands::Git { init, push } => {
-            if init {
-                println!("Initializing git repo");
-            }
-            if push {
-                println!("Pushing to git repo");
+        Commands::Git(git) => {
+            match git.command {
+                GitsCommands::Init => {
+                    println!("Initializing git repo");
+                }
+                GitsCommands::Push => {
+                    println!("Pushing dotfiles to git repo");
+                }
             }
         }
         Commands::Restore { file } => {
