@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 use std::io::Read;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use directories::BaseDirs;
 
 #[cfg(target_os = "macos")]
 pub const PATHWAY: &str = ".cyonix";
@@ -14,39 +15,59 @@ pub const PATHWAY: &str = ".cyonix";
 const STORAGE: &str = "/storage";
 const FILE: &str = "/file.list";
 
-#[derive(Debug, Clone)]
-pub struct Config {
-    files: Vec<&'static str>,
+/// Find PathBuf of config directory
+fn config_directory(base_dirs: &BaseDirs) -> PathBuf {
+    return base_dirs.home_dir().join(".config");
 }
 
-/// FILE.LIST
-///
-/// .zshrc   ~/.zshrc
-/// .bashrc  ~/.bashrc
-///       ^     ^
-///       |     |
-/// Vec<(&str,&str)>
+/// Find PathBuf of base home directory
+fn base_directory() -> BaseDirs {
+    return directories::BaseDirs::new()
+        .expect("Could not find base directory");
+}
 
-impl Config {
+#[derive(Debug, Clone)]
+pub struct Config<'a> {
+    /// Location of config folder
+    home: String,
+    
+    /// List of files to be linked
+    files: Vec<(&'a str, &'a str)>,
+}
+
+impl <'a> Config<'a> {
+    /// Load instance of Config
+    /// Temporarily left default configs, will be changed soon!
     pub fn new(path: &Path) -> Config {
-        let full_path =
-          format!("{}/{}/{}",
-                  PATHWAY,
-                  FILE,
-                  path.to_str().unwrap()
-          );
-        let path = Path::new(&full_path);
+      Config {
+        home: path.to_str().unwrap().to_string(),
+        files: Vec::new(),
+      }
+    }
+  
+    /// Parse the file.list file
+    /// where name and location of files are stored
+    ///
+    /// .zshrc   ~/.zshrc
+    /// .bashrc  ~/.bashrc
+    ///       ^     ^
+    ///       |     |
+    /// Vec<(&str,&str)>
+    /// < file >< whitespace >< location >< new line >
+    fn parse(&mut self, file: &'a str) {
+        let mut lines = file.lines();
         
-        let mut list = String::new();
-        
-        // read file
-        std::fs::File::open(path)
-            .unwrap()
-            .read_to_string(&mut list)
-            .expect("Couldn't stream to buf");
-      
-      
-
-        Config { files: Vec::new() }
+        while let Some(line) = lines.next() {
+            let mut words = line.split_whitespace();
+            
+            let name = words.next().unwrap();
+            let location = words.next().unwrap();
+            
+            self.files.push((name, location));
+        }
+    }
+  
+    fn read() {
+    
     }
 }

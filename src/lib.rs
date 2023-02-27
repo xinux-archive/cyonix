@@ -3,7 +3,7 @@ mod linker;
 pub mod args;
 
 use config::Config;
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 use config::PATHWAY;
 
 #[derive(Debug)]
