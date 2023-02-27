@@ -1,5 +1,6 @@
 mod config;
 mod linker;
+pub mod args;
 
 use config::Config;
 use std::path::{Path, PathBuf};
