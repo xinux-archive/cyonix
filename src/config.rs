@@ -16,12 +16,12 @@ const STORAGE: &str = "/storage";
 const FILE: &str = "/file.list";
 
 /// Find PathBuf of config directory
-fn config_directory(base_dirs: &BaseDirs) -> PathBuf {
+pub fn config_directory(base_dirs: &BaseDirs) -> PathBuf {
     return base_dirs.home_dir().join(".config");
 }
 
 /// Find PathBuf of base home directory
-fn base_directory() -> BaseDirs {
+pub fn base_directory() -> BaseDirs {
     return directories::BaseDirs::new()
         .expect("Could not find base directory");
 }
