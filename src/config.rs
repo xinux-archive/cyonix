@@ -22,7 +22,7 @@ pub fn config_directory(base_dirs: &BaseDirs) -> PathBuf {
 
 /// Find PathBuf of base home directory
 pub fn base_directory() -> BaseDirs {
-    return directories::BaseDirs::new()
+    return BaseDirs::new()
         .expect("Could not find base directory");
 }
 
@@ -38,7 +38,7 @@ pub struct Config<'a> {
 impl <'a> Config<'a> {
     /// Load instance of Config
     /// Temporarily left default configs, will be changed soon!
-    pub fn new(path: &Path) -> Config {
+    pub fn new(path: &Path) -> Config<'a> {
       Config {
         home: path.to_str().unwrap().to_string(),
         files: Vec::new(),

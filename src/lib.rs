@@ -2,16 +2,16 @@ mod config;
 mod linker;
 pub mod args;
 
-use config::Config;
+
+use config::{Config, PATHWAY};
 use std::path::{Path};
-use config::PATHWAY;
 
 #[derive(Debug)]
-pub struct Cyonix {
-    config: Config,
+pub struct Cyonix<'a> {
+    config: Config<'a>,
 }
 
-impl Default for Cyonix {
+impl<'a> Default for Cyonix<'a> {
     fn default() -> Self {
         let location = home::home_dir().unwrap();
 
@@ -21,7 +21,7 @@ impl Default for Cyonix {
     }
 }
 
-impl Cyonix {
+impl<'a> Cyonix<'a> {
     // move files to .cyonix
     pub fn move_file(&self, file: &str) {
         let path: &Path = Path::new(file);
