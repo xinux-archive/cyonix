@@ -12,8 +12,8 @@ pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 #[cfg(target_os = "linux")]
 pub const PATHWAY: &str = ".cyonix";
 
-const STORAGE: &str = "/storage";
-const FILE: &str = "/file.list";
+pub const STORAGE: &str = "/storage";
+pub const FILE: &str = "/file.list";
 
 /// Find PathBuf of config directory
 pub fn config_directory(base_dirs: &BaseDirs) -> PathBuf {
@@ -22,8 +22,8 @@ pub fn config_directory(base_dirs: &BaseDirs) -> PathBuf {
 
 /// Find PathBuf of base home directory
 pub fn base_directory() -> BaseDirs {
-    return BaseDirs::new()
-        .expect("Could not find base directory");
+     BaseDirs::new()
+        .expect("Could not find base directory")
 }
 
 #[derive(Debug, Clone)]
@@ -55,9 +55,9 @@ impl <'a> Config<'a> {
     /// Vec<(&str,&str)>
     /// < file >< whitespace >< location >< new line >
     fn parse(&mut self, file: &'a str) {
-        let mut lines = file.lines();
+        let lines = file.lines();
         
-        while let Some(line) = lines.next() {
+        for line in lines {
             let mut words = line.split_whitespace();
             
             let name = words.next().unwrap();

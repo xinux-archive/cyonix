@@ -30,11 +30,11 @@ pub enum Commands {
 #[command(args_conflicts_with_subcommands = true)]
 pub struct GitArgs {
     #[command(subcommand)]
-    pub command: GitsCommands,
+    pub command: GitCommands,
 }
 
 #[derive(Debug, Subcommand)]
-pub enum GitsCommands {
+pub enum GitCommands {
     /// Initialize git repo in dotfiles directory
     Init,
     

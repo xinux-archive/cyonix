@@ -1,19 +1,22 @@
 mod config;
 use std::process::{Command, exit};
 use clap::Parser;
-use cyonix::args::{Cli, Commands, GitsCommands};
+use cyonix::args::{Cli, Commands, GitCommands};
+use cyonix::Cyonix;
 use crate::config::{base_directory, config_directory};
 
 fn main() {
     let args = Cli::parse();
+    let cyonix: Cyonix = Default::default();
     
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
+            cyonix.add(&file).unwrap();
         }
         Commands::Git(git) => {
             match git.command {
-                GitsCommands::Init => {
+                GitCommands::Init => {
                     println!("Initializing git repo");
                     let dotfiles_dir = config_directory(&base_directory());
                     let git_dir = dotfiles_dir.join(".git");
@@ -26,7 +29,7 @@ fn main() {
                         .output()
                         .unwrap();
                 }
-                GitsCommands::Push => {
+                GitCommands::Push => {
                     println!("Pushing dotfiles to git repo");
                 }
             }
