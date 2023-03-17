@@ -59,7 +59,7 @@ impl <'a> Config<'a> {
         
         for line in lines {
             let mut words = line.split_whitespace();
-            
+
             let name = words.next().unwrap();
             let location = words.next().unwrap();
             
@@ -68,6 +68,6 @@ impl <'a> Config<'a> {
     }
   
     fn read() {
-    
+
     }
 }
