@@ -26,17 +26,22 @@ impl<'a> Default for Cyonix<'a> {
 }
 
 impl<'a> Cyonix<'a> {
-    pub fn create_dirs(&self, file: &str) -> std::io::Result<()>{
-        let home = home_dir().unwrap();
+    pub fn find_homedir(&self) -> PathBuf {
+        home_dir().unwrap()
+    }
+
+    pub fn find_config(&self) -> PathBuf {
+        self.find_homedir().join(CONFIG)
+    }
+
+    pub fn create_dirs(&self) -> std::io::Result<()>{
         let path = PathBuf::from(PATHWAY.to_string() + STORAGE);
 
         if !path.exists() {
-            create_dir_all(home.join(PATHWAY.to_string() + STORAGE))?;
+            create_dir_all(self.find_homedir().join(PATHWAY.to_string() + STORAGE))?;
         }
 
-        let file_path = home.join(PATHWAY);
-        let file_list = file_path.join(file);
-
+        let file_list = self.find_homedir().join(PATHWAY).join("file.list");
         File::create(file_list)?;
 
         Ok(())
@@ -44,14 +49,14 @@ impl<'a> Cyonix<'a> {
 
     // move files to .cyonix
     pub fn move_file(&self, file: &str) -> std::io::Result<()>{
-        let current_path: &Path = Path::new(file);
+        self.create_dirs()?;
+        let config_path = self.find_homedir().join(CONFIG).join(file);
         let storage_path =  format!("{}{}{}", PATHWAY, STORAGE, file);
 
-        create_dir_all(PATHWAY.to_string() + STORAGE)?;
 
-        if current_path.exists() {
-            std::fs::copy(file, storage_path)?;
-            std::fs::remove_file(file)?;
+        if config_path.exists() {
+            std::fs::copy(&config_path, storage_path)?;
+            std::fs::remove_file(&config_path)?;
         }
 
         Ok(())
