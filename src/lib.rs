@@ -8,7 +8,7 @@ use config::{Config, PATHWAY, STORAGE};
 use std::path::{Path, PathBuf};
 use dirs::home_dir;
 
-pub const CONFIG: &str = ".config";
+pub const CONFIG: &str = ".file";
 
 #[derive(Debug)]
 pub struct Cyonix<'a> {
@@ -30,15 +30,15 @@ impl<'a> Cyonix<'a> {
         home_dir().unwrap()
     }
 
-    pub fn find_config(&self) -> PathBuf {
-        self.find_homedir().join(CONFIG)
+    pub fn find_storage(&self) -> PathBuf {
+        self.find_homedir().join(PATHWAY.to_string() + STORAGE)
     }
 
     pub fn create_dirs(&self) -> std::io::Result<()>{
         let path = PathBuf::from(PATHWAY.to_string() + STORAGE);
 
         if !path.exists() {
-            create_dir_all(self.find_homedir().join(PATHWAY.to_string() + STORAGE))?;
+            create_dir_all(self.find_storage())?;
         }
 
         let file_list = self.find_homedir().join(PATHWAY).join("file.list");
@@ -51,7 +51,7 @@ impl<'a> Cyonix<'a> {
     pub fn move_file(&self, file: &str) -> std::io::Result<()>{
         self.create_dirs()?;
         let config_path = self.find_homedir().join(CONFIG).join(file);
-        let storage_path =  format!("{}{}{}", PATHWAY, STORAGE, file);
+        let storage_path =  self.find_storage().join(file);
 
 
         if config_path.exists() {
@@ -64,7 +64,7 @@ impl<'a> Cyonix<'a> {
 
     pub fn add(&self, file: &str) -> std::io::Result<()> {
         self.move_file(file)?;
-        let in_storage = format!("{}{}{}", PATHWAY, STORAGE, file);
+        let in_storage = self.find_storage().join(file);
         File::create(in_storage)?;
         Ok(())
     }
