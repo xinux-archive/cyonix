@@ -3,9 +3,9 @@ mod linker;
 pub mod args;
 
 
-use std::fs::{create_dir_all, File, Permissions, remove_file};
+use std::fs::{create_dir_all, File};
 use config::{Config, PATHWAY, STORAGE};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use dirs::home_dir;
 
 pub const CONFIG: &str = ".file";
@@ -64,8 +64,18 @@ impl<'a> Cyonix<'a> {
 
     pub fn add(&self, file: &str) -> std::io::Result<()> {
         self.move_file(file)?;
-        let in_storage = self.find_storage().join(file);
-        File::create(in_storage)?;
+        let storage_path = self.find_storage().join(file);
+        File::create(storage_path)?;
+        Ok(())
+    }
+
+    pub fn delete(&self, file: &str) -> std::io::Result<()> {
+        self.move_file(file)?;
+        let storage_path = self.find_storage().join(file);
+        if storage_path.exists() {
+            std::fs::remove_file(storage_path)?;
+        }
+
         Ok(())
     }
 }

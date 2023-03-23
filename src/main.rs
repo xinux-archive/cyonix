@@ -12,7 +12,7 @@ fn main() {
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
-            cyonix.add(&file).unwrap();
+            cyonix.delete(&file).unwrap();
         }
         Commands::Git(git) => {
             match git.command {
