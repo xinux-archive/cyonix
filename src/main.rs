@@ -1,4 +1,6 @@
 mod config;
+mod error;
+
 use std::process::{Command, exit};
 use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
@@ -12,13 +14,17 @@ fn main() {
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
+            cyonix.move_file(&file).unwrap();
+        },
+        Commands::Delete { file} => {
+            println!("Deleting {file}");
             cyonix.delete(&file).unwrap();
         }
         Commands::Git(git) => {
             match git.command {
                 GitCommands::Init => {
                     println!("Initializing git repo");
-                    let dotfiles_dir = config_directory(&base_directory());
+                    let dotfiles_dir = config_directory();
                     let git_dir = dotfiles_dir.join(".git");
                     if git_dir.exists() {
                         println!("Git repository already exists");

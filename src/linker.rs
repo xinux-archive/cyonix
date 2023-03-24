@@ -1,3 +1,6 @@
+use std::os::unix::fs::symlink;
+use std::path::{Path, PathBuf};
+
 pub struct Linker {
     path: String,
 }
@@ -20,4 +23,5 @@ impl Linker {
     fn is_symlink(&self) -> bool {
         std::path::Path::new(&self.path).is_symlink()
     }
+
 }

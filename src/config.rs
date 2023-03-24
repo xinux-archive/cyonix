@@ -1,7 +1,10 @@
+
 use std::fmt::Debug;
-use std::io::Read;
+use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
-use directories::BaseDirs;
+use dirs::home_dir;
+use crate::error::CyonixError;
+
 
 #[cfg(target_os = "macos")]
 pub const PATHWAY: &str = ".cyonix";
@@ -11,19 +14,17 @@ pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 
 #[cfg(target_os = "linux")]
 pub const PATHWAY: &str = ".cyonix";
-
 pub const STORAGE: &str = "/storage";
 pub const FILE: &str = "/file.list";
 
 /// Find PathBuf of config directory
-pub fn config_directory(base_dirs: &BaseDirs) -> PathBuf {
-    return base_dirs.home_dir().join(".config");
+pub fn config_directory() -> PathBuf {
+     base_directory().join(".config")
 }
 
 /// Find PathBuf of base home directory
-pub fn base_directory() -> BaseDirs {
-     BaseDirs::new()
-        .expect("Could not find base directory")
+pub fn base_directory() -> PathBuf {
+    home_dir().expect("Could not find home directory :(")
 }
 
 #[derive(Debug, Clone)]
@@ -67,7 +68,14 @@ impl <'a> Config<'a> {
         }
     }
   
-    fn read() {
+     fn read(&self, file: &'a str) -> std::io::Result<&'a str> {
+         let conf_file = config_directory().join(file);
+         if !conf_file.exists(){
+             CyonixError::io_error(ErrorKind::NotFound, "");
+         }
 
+         std::fs::read_to_string(conf_file).expect("Failed to read :(");
+
+         Ok(file)
     }
 }

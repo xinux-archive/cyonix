@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand, Args};
 
+
 /// Dotfile farm manager
 #[derive(Debug, Parser)]
 #[command(name = "cyonix")]
@@ -16,13 +17,17 @@ pub enum Commands {
         /// Path to file
         file: String,
     },
+
+    Delete {
+        file: String,
+    },
     
     /// Synchronize dotfiles with cloud
     Git(GitArgs),
     
     /// Restoring and managing dotfiles
     Restore {
-        file: Option<String>
+        file: Option<String>,
     }
 }
 
