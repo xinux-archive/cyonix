@@ -1,4 +1,4 @@
-mod config;
+pub mod config;
 mod linker;
 pub mod args;
 pub mod error;

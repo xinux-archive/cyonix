@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use dirs::home_dir;
 use crate::error::CyonixError;
@@ -12,6 +11,7 @@ pub const PATHWAY: &str = ".cyonix";
 pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 
 #[cfg(target_os = "linux")]
+use std::os::unix::fs;
 pub const PATHWAY: &str = ".cyonix";
 pub const STORAGE: &str = "/storage";
 pub const FILE: &str = "/file.list";
@@ -54,7 +54,7 @@ impl <'a> Config<'a> {
     ///       |     |
     /// Vec<(&str,&str)>
     /// < file >< whitespace >< location >< new line >
-    fn parse(&mut self, file: &'a str) {
+    pub fn parse(&mut self, file: &'a str) {
         let lines = file.lines();
         
         for line in lines {
@@ -67,14 +67,29 @@ impl <'a> Config<'a> {
         }
     }
   
-     fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
+     pub fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
          let conf_file = config_directory().join(file);
          if !conf_file.exists(){
-             String::from("The file doesn't exist :(");
+             return Err(CyonixError::CustomError(String::from("The file doesn't exist :(")))
          }
 
          std::fs::read_to_string(conf_file).expect("Failed to read :(");
 
          Ok(file)
+    }
+
+    pub fn create_symlinks(&self) -> Result<(), CyonixError> {
+        for (name, location) in &self.files {
+            let source = Path::new(&self.home).join(name);
+            let target = Path::new(location);
+
+            if target.exists() {
+                return Err(CyonixError::CustomError(format!("Target file already exists: {}", location)));
+            }
+
+            fs::symlink(source, target)
+                .map_err(|e| CyonixError::CustomError(String::from("Failed to create symlink")))?;
+        }
+        Ok(())
     }
 }
