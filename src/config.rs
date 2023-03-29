@@ -67,10 +67,10 @@ impl <'a> Config<'a> {
         }
     }
   
-     fn read(&self, file: &'a str) -> std::io::Result<&'a str> {
+     fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
          let conf_file = config_directory().join(file);
          if !conf_file.exists(){
-             CyonixError::io_error(ErrorKind::NotFound, "Couldn't find a file :(");
+             String::from("The file doesn't exist :(");
          }
 
          std::fs::read_to_string(conf_file).expect("Failed to read :(");

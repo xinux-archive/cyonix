@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter};
 use std::io::Error;
 
+
 #[derive(Debug)]
 pub enum CyonixError {
      IoError(Error),
@@ -13,7 +14,6 @@ impl Display for CyonixError {
         match self {
             CyonixError::IoError(e) => write!(f, "I/O error: {} :(", e),
             CyonixError::CustomError(err) => write!(f, "Error occurred: {} :(", err),
-            _ => write!(f, "Unknown error :("),
         }
     }
 }
@@ -34,3 +34,4 @@ impl From<Error> for CyonixError {
         CyonixError::IoError(err)
     }
 }
+

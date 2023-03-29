@@ -1,12 +1,10 @@
 mod config;
 mod error;
 
-use std::process::{Command, exit};
 use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
 use cyonix::Cyonix;
-use crate::config::{base_directory, config_directory};
-use crate::error::CyonixError;
+use cyonix::error::CyonixError;
 
 fn main() -> Result<(), CyonixError> {
     let args = Cli::parse();
@@ -25,16 +23,6 @@ fn main() -> Result<(), CyonixError> {
             match git.command {
                 GitCommands::Init => {
                     println!("Initializing git repo");
-                    let dotfiles_dir = config_directory();
-                    let git_dir = dotfiles_dir.join(".git");
-                    if git_dir.exists() {
-                        println!("Git repository already exists");
-                        exit(1);
-                    }
-                    Command::new("git")
-                        .args(["init", dotfiles_dir.to_str().unwrap()])
-                        .output()
-                        .unwrap();
                 }
                 GitCommands::Push => {
                     println!("Pushing dotfiles to git repo");
@@ -49,6 +37,5 @@ fn main() -> Result<(), CyonixError> {
             }
         }
     }
-
-    OK(())
+    Ok(())
 }
