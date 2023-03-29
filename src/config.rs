@@ -1,4 +1,3 @@
-
 use std::fmt::Debug;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
@@ -71,7 +70,7 @@ impl <'a> Config<'a> {
      fn read(&self, file: &'a str) -> std::io::Result<&'a str> {
          let conf_file = config_directory().join(file);
          if !conf_file.exists(){
-             CyonixError::io_error(ErrorKind::NotFound, "");
+             CyonixError::io_error(ErrorKind::NotFound, "Couldn't find a file :(");
          }
 
          std::fs::read_to_string(conf_file).expect("Failed to read :(");

@@ -6,19 +6,20 @@ use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
 use cyonix::Cyonix;
 use crate::config::{base_directory, config_directory};
+use crate::error::CyonixError;
 
-fn main() {
+fn main() -> Result<(), CyonixError> {
     let args = Cli::parse();
     let cyonix: Cyonix = Default::default();
     
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
-            cyonix.move_file(&file).unwrap();
+            cyonix.move_file(&file)?;
         },
         Commands::Delete { file} => {
             println!("Deleting {file}");
-            cyonix.delete(&file).unwrap();
+            cyonix.delete(&file)?;
         }
         Commands::Git(git) => {
             match git.command {
@@ -48,4 +49,6 @@ fn main() {
             }
         }
     }
+
+    OK(())
 }
