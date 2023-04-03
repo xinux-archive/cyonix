@@ -1,8 +1,8 @@
 use std::fmt::Debug;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use dirs::home_dir;
 use crate::error::CyonixError;
-use std::os::unix::fs;
+
 
 #[cfg(target_os = "macos")]
 pub const PATHWAY: &str = ".cyonix";
@@ -11,9 +11,10 @@ pub const PATHWAY: &str = ".cyonix";
 pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 
 #[cfg(target_os = "linux")]
+pub const CONFIG: &str = ".file";
 pub const PATHWAY: &str = ".cyonix";
 pub const STORAGE: &str = "/storage";
-pub const FILE: &str = "/file.list";
+pub const FILE: &str = "file.list";
 
 #[derive(Debug, Clone)]
 pub struct Config<'a> {
@@ -37,7 +38,7 @@ impl <'a> Config<'a> {
 
     pub fn find_config() -> PathBuf {
         let base_dir = home_dir().unwrap();
-        base_dir.join(".config")
+        base_dir.join(CONFIG)
     }
 
     /// Parse the file.list file

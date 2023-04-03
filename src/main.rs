@@ -5,27 +5,28 @@ use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
 use cyonix::Cyonix;
 use cyonix::error::CyonixError;
-use cyonix::config::{Config,  FILE};
+use cyonix::config::{Config, FILE};
 
 fn main() -> Result<(), CyonixError> {
     let mut config = Config::new(Config::find_config());
-    config.init(FILE)?;
+    //config.init(FILE)?;
 
     // Create the symlinks
     // TODO: explain more about Linker struct
-    config.create_symlinks().expect("Failed to create symlinks");
+   // config.create_symlinks().expect("Failed to create symlinks");
 
     let args = Cli::parse();
     let cyonix: Cyonix = Cyonix::default();
+    let cyonix_manager = cyonix.file;
     
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
-            cyonix.move_file(&file)?;
+            cyonix_manager.move_file(&file)?;
         },
         Commands::Delete { file} => {
             println!("Deleting {file}");
-            cyonix.delete(&file)?;
+            cyonix_manager.delete(&file)?;
         }
         Commands::Git(git) => {
             match git.command {
