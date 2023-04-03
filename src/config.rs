@@ -79,19 +79,4 @@ impl <'a> Config<'a> {
         self.parse(file_list);
         Ok(())
     }
-
-    pub fn create_symlinks(&self) -> Result<(), CyonixError> {
-        for (name, location) in &self.files {
-            let source = Path::new(&self.home).join(name);
-            let target = Path::new(location);
-
-            if target.exists() {
-                return Err(CyonixError::CustomError(format!("Target file already exists: {}", location)));
-            }
-
-            fs::symlink(source, target)
-                .map_err(|e| CyonixError::CustomError(String::from("Failed to create symlink")))?;
-        }
-        Ok(())
-    }
 }
