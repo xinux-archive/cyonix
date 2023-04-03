@@ -8,7 +8,6 @@ use std::fs::{create_dir_all, File};
 use config::{Config, PATHWAY, STORAGE, FILE};
 use std::path::PathBuf;
 use dirs::home_dir;
-use crate::config::base_directory;
 use crate::error::CyonixError;
 
 pub const CONFIG: &str = ".file";
@@ -23,15 +22,19 @@ impl<'a> Default for Cyonix<'a> {
         let location = home_dir().unwrap();
 
         Cyonix {
-            config: Config::new(&location),
+            config: Config::new(location),
         }
     }
 }
 
 impl<'a> Cyonix<'a> {
 
+    pub fn locate_homedir(&self) -> PathBuf {
+        home_dir().unwrap()
+    }
+
     pub fn find_storage(&self) -> PathBuf {
-        base_directory().join(PATHWAY.to_string() + STORAGE)
+        self.locate_homedir().join(PATHWAY.to_string() + STORAGE)
     }
 
     pub fn create_dirs(&self) -> Result<(), CyonixError>{
@@ -41,7 +44,7 @@ impl<'a> Cyonix<'a> {
                 .expect("Failed to create directories :(");
         }
 
-        let file_list = base_directory().join(PATHWAY).join(FILE);
+        let file_list = self.locate_homedir().join(PATHWAY).join(FILE);
         if !file_list.exists(){
             File::create(file_list)
                 .expect("Failed to create the file list :(");
@@ -52,7 +55,7 @@ impl<'a> Cyonix<'a> {
     // move files to .cyonix
     pub fn move_file(&self, file: &str) -> Result<(), CyonixError>{
         self.create_dirs()?;
-        let config_path = base_directory().join(CONFIG).join(file);
+        let config_path = self.locate_homedir().join(CONFIG).join(file);
         let storage_path =  self.find_storage().join(file);
 
 

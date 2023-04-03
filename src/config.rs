@@ -18,7 +18,7 @@ pub const FILE: &str = "/file.list";
 #[derive(Debug, Clone)]
 pub struct Config<'a> {
     /// Location of config folder
-    home: String,
+    home: PathBuf,
     
     /// List of files to be linked
     files: Vec<(&'a str, &'a str)>,
@@ -27,15 +27,15 @@ pub struct Config<'a> {
 impl <'a> Config<'a> {
     /// Load instance of Config
     /// Temporarily left default configs, will be changed soon!
-    pub fn new(path: &Path) -> Config<'a> {
+    pub fn new(path: PathBuf) -> Config<'a> {
       // here
         Config {
-        home: path.to_str().unwrap().to_string(),
+        home: Config::find_config(),
         files: Vec::new(),
       }
     }
 
-    pub fn find_config(&self) -> PathBuf {
+    pub fn find_config() -> PathBuf {
         let base_dir = home_dir().unwrap();
         base_dir.join(".config")
     }
@@ -63,7 +63,7 @@ impl <'a> Config<'a> {
     }
   
      pub fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
-         let conf_file = self.find_config().join(file);
+         let conf_file = self.home.join(file);
          if !conf_file.exists(){
              return Err(CyonixError::CustomError(String::from("The file doesn't exist :(")))
          }
@@ -73,7 +73,12 @@ impl <'a> Config<'a> {
          Ok(file)
     }
 
-    pub fn init() {}
+    pub fn init(&mut self, file: &'a str) -> Result<(), CyonixError>{
+        // Read the file list and parse it
+        let file_list = self.read(file)?;
+        self.parse(file_list);
+        Ok(())
+    }
 
     pub fn create_symlinks(&self) -> Result<(), CyonixError> {
         for (name, location) in &self.files {

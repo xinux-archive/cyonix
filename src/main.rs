@@ -5,14 +5,11 @@ use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
 use cyonix::Cyonix;
 use cyonix::error::CyonixError;
-use cyonix::config::{Config, FILE};
+use cyonix::config::{Config,  FILE};
 
 fn main() -> Result<(), CyonixError> {
-    let mut config = Config::new();
-
-    // Read the file list and parse it
-    let file_list = config.read(FILE)?;
-    config.parse(file_list);
+    let mut config = Config::new(Config::find_config());
+    config.init(FILE)?;
 
     // Create the symlinks
     // TODO: explain more about Linker struct
