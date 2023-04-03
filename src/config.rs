@@ -15,16 +15,6 @@ pub const PATHWAY: &str = ".cyonix";
 pub const STORAGE: &str = "/storage";
 pub const FILE: &str = "/file.list";
 
-/// Find PathBuf of config directory
-pub fn config_directory() -> PathBuf {
-     base_directory().join(".config")
-}
-
-/// Find PathBuf of base home directory
-pub fn base_directory() -> PathBuf {
-    home_dir().expect("Could not find home directory :(")
-}
-
 #[derive(Debug, Clone)]
 pub struct Config<'a> {
     /// Location of config folder
@@ -39,14 +29,17 @@ impl <'a> Config<'a> {
     /// Temporarily left default configs, will be changed soon!
     pub fn new(path: &Path) -> Config<'a> {
       // here
-
-
         Config {
         home: path.to_str().unwrap().to_string(),
         files: Vec::new(),
       }
     }
-  
+
+    pub fn find_config(&self) -> PathBuf {
+        let base_dir = home_dir().unwrap();
+        base_dir.join(".config")
+    }
+
     /// Parse the file.list file
     /// where name and location of files are stored
     ///
@@ -70,12 +63,12 @@ impl <'a> Config<'a> {
     }
   
      pub fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
-         let conf_file = config_directory().join(file);
+         let conf_file = self.find_config().join(file);
          if !conf_file.exists(){
              return Err(CyonixError::CustomError(String::from("The file doesn't exist :(")))
          }
 
-         std::fs::read_to_string(conf_file).expect("Failed to read :(");
+         std::fs::read_to_string(conf_file)?;
 
          Ok(file)
     }

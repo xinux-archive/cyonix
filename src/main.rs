@@ -5,11 +5,10 @@ use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
 use cyonix::Cyonix;
 use cyonix::error::CyonixError;
-use cyonix::config::{Config, config_directory, FILE};
+use cyonix::config::{Config, FILE};
 
 fn main() -> Result<(), CyonixError> {
-    let path = config_directory();
-    let mut config = Config::new(&path);
+    let mut config = Config::new();
 
     // Read the file list and parse it
     let file_list = config.read(FILE)?;
