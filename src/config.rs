@@ -2,7 +2,7 @@ use std::fmt::Debug;
 use std::path::{Path, PathBuf};
 use dirs::home_dir;
 use crate::error::CyonixError;
-
+use std::os::unix::fs;
 
 #[cfg(target_os = "macos")]
 pub const PATHWAY: &str = ".cyonix";
@@ -11,7 +11,6 @@ pub const PATHWAY: &str = ".cyonix";
 pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 
 #[cfg(target_os = "linux")]
-use std::os::unix::fs;
 pub const PATHWAY: &str = ".cyonix";
 pub const STORAGE: &str = "/storage";
 pub const FILE: &str = "/file.list";
@@ -39,7 +38,10 @@ impl <'a> Config<'a> {
     /// Load instance of Config
     /// Temporarily left default configs, will be changed soon!
     pub fn new(path: &Path) -> Config<'a> {
-      Config {
+      // here
+
+
+        Config {
         home: path.to_str().unwrap().to_string(),
         files: Vec::new(),
       }
@@ -77,6 +79,8 @@ impl <'a> Config<'a> {
 
          Ok(file)
     }
+
+    pub fn init() {}
 
     pub fn create_symlinks(&self) -> Result<(), CyonixError> {
         for (name, location) in &self.files {

@@ -16,10 +16,11 @@ fn main() -> Result<(), CyonixError> {
     config.parse(file_list);
 
     // Create the symlinks
+    // TODO: explain more about Linker struct
     config.create_symlinks().expect("Failed to create symlinks");
 
     let args = Cli::parse();
-    let cyonix: Cyonix = Default::default();
+    let cyonix: Cyonix = Cyonix::default();
     
     match args.command {
         Commands::Add { file } => {

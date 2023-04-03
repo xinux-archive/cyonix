@@ -12,7 +12,7 @@ pub enum CyonixError {
 impl Display for CyonixError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            CyonixError::IoError(e) => write!(f, "I/O error: {} :(", e),
+            CyonixError::IoError(err) => write!(f, "I/O error: {} :(", err),
             CyonixError::CustomError(err) => write!(f, "Error occurred: {} :(", err),
         }
     }
