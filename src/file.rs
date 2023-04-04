@@ -18,6 +18,10 @@ impl Files {
     pub fn find_storage(&self) -> PathBuf {
         self.home.join(PATHWAY.to_string() + STORAGE)
     }
+    
+    pub fn find_filelist(&self) -> PathBuf {
+        self.home.join(PATHWAY).join(FILE)
+    }
 
     pub fn create_dirs(&self) -> Result<(), CyonixError>{
         let path = PathBuf::from(PATHWAY.to_string() + STORAGE);
@@ -25,7 +29,7 @@ impl Files {
             create_dir_all(self.find_storage())?;
         }
 
-        let file_list = self.home.join(PATHWAY).join(FILE);
+        let file_list = self.find_filelist();
         if !file_list.exists(){
             File::create(file_list).expect("Failed to create the file");
         }

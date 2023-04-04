@@ -7,6 +7,8 @@ use cyonix::Cyonix;
 use cyonix::error::CyonixError;
 use cyonix::config::{Config, FILE};
 
+
+
 fn main() -> Result<(), CyonixError> {
     let mut config = Config::new(Config::find_config());
     //config.init(FILE)?;
@@ -16,17 +18,17 @@ fn main() -> Result<(), CyonixError> {
    // config.create_symlinks().expect("Failed to create symlinks");
 
     let args = Cli::parse();
-    let cyonix: Cyonix = Cyonix::default();
-    let cyonix_manager = cyonix.file;
+    let cyonix= Cyonix::default().file;
+
     
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
-            cyonix_manager.move_file(&file)?;
+            cyonix.move_file(&file)?;
         },
         Commands::Delete { file} => {
             println!("Deleting {file}");
-            cyonix_manager.delete(&file)?;
+            cyonix.delete(&file)?;
         }
         Commands::Git(git) => {
             match git.command {
