@@ -1,9 +1,10 @@
 mod config;
 mod error;
 
+use std::process::exit;
 use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
-use cyonix::Cyonix;
+use cyonix::{Cyonix, lemme_panic};
 use cyonix::error::CyonixError;
 use cyonix::config::{Config, FILE};
 
@@ -11,7 +12,9 @@ use cyonix::config::{Config, FILE};
 
 fn main() -> Result<(), CyonixError> {
     let mut config = Config::new(Config::find_config());
-    //config.init(FILE)?;
+    //lemme_panic(config.init(FILE));
+
+
 
     // Create the symlinks
     // TODO: explain more about Linker struct
@@ -24,7 +27,7 @@ fn main() -> Result<(), CyonixError> {
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
-            cyonix.move_file(&file)?;
+            lemme_panic(cyonix.move_file(&file));
         },
         Commands::Delete { file} => {
             println!("Deleting {file}");

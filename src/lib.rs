@@ -4,6 +4,8 @@ pub mod args;
 pub mod error;
 pub mod file;
 
+use std::fmt::{Debug, Display};
+use std::process::exit;
 use config::Config;
 use dirs::home_dir;
 use crate::file::Files;
@@ -23,5 +25,12 @@ impl<'a> Default for Cyonix<'a> {
             config: Config::new(location.clone()),
             file: Files::new(location),
         }
+    }
+}
+
+pub fn lemme_panic<T, E: Debug + Display>(result: Result<T, E>){
+    if let Err(e) = result{
+        println!("{e}");
+        exit(1);
     }
 }

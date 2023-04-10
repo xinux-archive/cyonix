@@ -24,7 +24,7 @@ impl Linker {
                 let target = Path::new(location);
 
                 if target.exists() {
-                    return Err(CyonixError::CustomError(format!("Target file already exists: {}", location)));
+                    return Err(CyonixError::SpecificError(format!("Target file already exists: {}", location)));
                 }
 
                 fs::symlink(source, target)?;

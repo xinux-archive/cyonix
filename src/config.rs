@@ -65,9 +65,6 @@ impl <'a> Config<'a> {
   
      pub fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
          let conf_file = self.home.join(file);
-         if !conf_file.exists(){
-             return Err(CyonixError::CustomError(String::from("The file doesn't exist :(")))
-         }
 
          std::fs::read_to_string(conf_file)?;
 
