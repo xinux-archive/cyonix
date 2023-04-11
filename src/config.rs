@@ -52,23 +52,29 @@ impl <'a> Config<'a> {
     /// < file >< whitespace >< location >< new line >
     pub fn parse(&mut self, file: &'a str) {
         let lines = file.lines();
-        
+
         for line in lines {
             let mut words = line.split_whitespace();
 
             let name = words.next().unwrap();
             let location = words.next().unwrap();
-            
+
             self.files.push((name, location));
         }
     }
-  
-     pub fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
-         let conf_file = self.home.join(file);
 
-         std::fs::read_to_string(conf_file)?;
-
-         Ok(file)
+    pub fn read(&self, file: &'a str) -> Result<&'a str, CyonixError> {
+        match home_dir() {
+            Some(home_dir) => {
+                let conf_file = home_dir.join(PATHWAY).join(file);
+                if !conf_file.exists() {
+                    return Err(CyonixError::SpecificError(String::from("Failed to initialize config :(")))
+                }
+                std::fs::read_to_string(conf_file)?;
+                Ok(file)
+            }
+            None => Err(CyonixError::SpecificError(String::from("Failed to find the home directory"))),
+        }
     }
 
     pub fn init(&mut self, file: &'a str) -> Result<(), CyonixError>{

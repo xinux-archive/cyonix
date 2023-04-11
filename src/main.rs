@@ -1,20 +1,16 @@
 mod config;
 mod error;
 
-use std::process::exit;
 use clap::Parser;
 use cyonix::args::{Cli, Commands, GitCommands};
 use cyonix::{Cyonix, lemme_panic};
-use cyonix::error::CyonixError;
 use cyonix::config::{Config, FILE};
 
 
 
-fn main() -> Result<(), CyonixError> {
+fn main() {
     let mut config = Config::new(Config::find_config());
-    //lemme_panic(config.init(FILE));
-
-
+    lemme_panic(config.init(FILE));
 
     // Create the symlinks
     // TODO: explain more about Linker struct
@@ -31,7 +27,7 @@ fn main() -> Result<(), CyonixError> {
         },
         Commands::Delete { file} => {
             println!("Deleting {file}");
-            cyonix.delete(&file)?;
+            lemme_panic(cyonix.delete(&file));
         }
         Commands::Git(git) => {
             match git.command {
@@ -44,12 +40,11 @@ fn main() -> Result<(), CyonixError> {
             }
         }
         Commands::Restore { file } => {
-            if let Some(file) = file {
+            if let Some(file) = file{
                 println!("Restoring {file}");
             } else {
                 println!("Restoring all files");
             }
         }
     }
-    Ok(())
 }
