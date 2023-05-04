@@ -56,10 +56,11 @@ impl <'a> Config<'a> {
         for line in lines {
             let mut words = line.split_whitespace();
 
-            let name = words.next().unwrap();
-            let location = words.next().unwrap();
-
-            self.files.push((name, location));
+            if let Some(name) = words.next(){
+                if let Some(location) = words.next(){
+                    self.files.push((name, location));
+                }
+            }
         }
     }
 
