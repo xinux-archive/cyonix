@@ -1,5 +1,5 @@
 use std::os::unix::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use crate::error::CyonixError;
 
 pub struct Linker {

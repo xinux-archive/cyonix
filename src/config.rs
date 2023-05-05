@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use std::io::ErrorKind;
 use std::path::PathBuf;
 use dirs::home_dir;
 use crate::error::CyonixError;
@@ -11,7 +12,7 @@ pub const PATHWAY: &str = ".cyonix";
 pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 
 #[cfg(target_os = "linux")]
-pub const CONFIG: &str = ".file";
+pub const CONFIG: &str = ".config";
 pub const PATHWAY: &str = ".cyonix";
 pub const STORAGE: &str = "/storage";
 pub const FILE: &str = "file.list";
@@ -69,7 +70,7 @@ impl <'a> Config<'a> {
             Some(home_dir) => {
                 let conf_file = home_dir.join(PATHWAY).join(file);
                 if !conf_file.exists() {
-                    return Err(CyonixError::SpecificError(String::from("Failed to initialize config :(")))
+                    return Err(CyonixError::CustomError(ErrorKind::AlreadyExists))
                 }
                 std::fs::read_to_string(conf_file)?;
                 Ok(file)
