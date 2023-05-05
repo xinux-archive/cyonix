@@ -23,6 +23,10 @@ fn main() {
     match args.command {
         Commands::Add { file } => {
             println!("Cloning {file}");
+            // TODO:
+            // 1. move file
+            // 2. save the name and its location to config
+            // 3. create symlink
             lemme_panic(cyonix.move_file(&file));
         },
         Commands::Delete { file} => {

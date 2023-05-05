@@ -1,0 +1,34 @@
+========================================
+How it's supposed to look like in file:
+========================================
+<FILE> <LOCATION>
+.zshrc ~/.zshrc
+.bashrc ~/.bashrc
+
+========================================
+How it's supposed to be on Rust
+========================================
+struct File {
+    file: String
+    location: String
+}
+
+Config -> Vec<Config>
+
+Config has methods:
+    get_location(".zshrc") // expected result String("~/.zshrc")
+    get_files() // expected result Vec<String>
+
+
+========================================
+How to know if it's home folder?
+========================================
+Check if path contains folder "home" or "Users" replace with "~"
+
+========================================
+How software supposed to work (detailed)
+========================================
+1. Check if config thingies exist (does ~/.cyonix folder exists and if ~/.cyonix/file.list)
+2. Save the file name and its location to list located at config file (file.lists)
+    - Parse the file
+    -

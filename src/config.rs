@@ -12,8 +12,9 @@ pub const PATHWAY: &str = ".cyonix";
 pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 
 #[cfg(target_os = "linux")]
-pub const CONFIG: &str = ".config";
 pub const PATHWAY: &str = ".cyonix";
+
+pub const CONFIG: &str = ".config";
 pub const STORAGE: &str = "/storage";
 pub const FILE: &str = "file.list";
 
@@ -37,6 +38,17 @@ impl <'a> Config<'a> {
       }
     }
 
+    // TODO: implement add, save function
+    // when user run add command, program should
+    // add the file and its location to the vector files: Vec<(&'a str, &'a str)>
+    // and when program finishes it's job (nearly the end of program), save the files
+    // vector to the file.list file
+    // write("{file} {location}", file, location)
+    // Reminder!
+    // Before writing to file, delete the old records or just overwrite
+    // so you don't duplicate records
+
+
     pub fn find_config() -> PathBuf {
         let base_dir = home_dir().unwrap();
         base_dir.join(CONFIG)
@@ -59,7 +71,7 @@ impl <'a> Config<'a> {
 
             if let Some(name) = words.next(){
                 if let Some(location) = words.next(){
-                    self.files.push((name, location));
+                    self.files.push((name, location)); // (".zshrc" , "~/.zshrc")
                 }
             }
         }
@@ -79,10 +91,24 @@ impl <'a> Config<'a> {
         }
     }
 
+    // TODO: implement function to bootstrap
+    pub fn bootstrap() {}
+
     pub fn init(&mut self, file: &'a str) -> Result<(), CyonixError>{
+        // TODO: check if file actually exists
+        // If not, it's the first time user us running the program
+        // So create, file and folders for the user
+
         // Read the file list and parse it
-        let file_list = self.read(file)?;
-        self.parse(file_list);
+        // We read the content of file
+        let file_list_content = self.read(file)?;
+
+        // If content is empty, return error... Don't parse!
+        if file_list_content.is_empty() {
+            return Err(CyonixError::SpecificError(String::from("File list is empty")))
+        }
+
+        self.parse(file_list_content);
         Ok(())
     }
 }
