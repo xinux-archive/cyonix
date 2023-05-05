@@ -9,8 +9,8 @@ use cyonix::config::{Config, FILE};
 
 
 fn main() {
-    let mut config = Config::new(Config::find_config());
-    lemme_panic(config.init(FILE));
+    //let mut config = Config::new(Config::find_config());
+    //lemme_panic(config.init(FILE));
 
     // Create the symlinks
     // TODO: explain more about Linker struct
@@ -25,7 +25,7 @@ fn main() {
             println!("Cloning {file}");
             // TODO:
             // 1. move file
-            // 2. save the name and its location to config
+            // 2. save the name and its location to file.list
             // 3. create symlink
             lemme_panic(cyonix.move_file(&file));
         },

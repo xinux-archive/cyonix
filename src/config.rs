@@ -13,7 +13,6 @@ pub const PATHWAY: &str = "AppData/Roaming/cyonix";
 
 #[cfg(target_os = "linux")]
 pub const PATHWAY: &str = ".cyonix";
-
 pub const CONFIG: &str = ".config";
 pub const STORAGE: &str = "/storage";
 pub const FILE: &str = "file.list";
@@ -82,7 +81,7 @@ impl <'a> Config<'a> {
             Some(home_dir) => {
                 let conf_file = home_dir.join(PATHWAY).join(file);
                 if !conf_file.exists() {
-                    return Err(CyonixError::CustomError(ErrorKind::AlreadyExists))
+                    return Err(CyonixError::CustomError(ErrorKind::NotFound))
                 }
                 std::fs::read_to_string(conf_file)?;
                 Ok(file)
