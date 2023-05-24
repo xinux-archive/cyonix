@@ -40,7 +40,7 @@ impl <'a> Config<'a> {
     // TODO: implement add, save function
     // when user run add command, program should
     // add the file and its location to the vector files: Vec<(&'a str, &'a str)>
-    // and when program finishes it's job (nearly the end of program), save the files
+    // and when program finishes its job (nearly the end of program), save the files
     // vector to the file.list file
     // write("{file} {location}", file, location)
     // Reminder!

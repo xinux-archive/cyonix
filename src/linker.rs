@@ -1,3 +1,4 @@
+use std::io::ErrorKind;
 use std::os::unix::fs;
 use std::path::Path;
 use crate::error::CyonixError;
@@ -24,7 +25,7 @@ impl Linker {
                 let target = Path::new(location);
 
                 if target.exists() {
-                    return Err(CyonixError::SpecificError(format!("Target file already exists: {}", location)));
+                    return Err(CyonixError::CustomError(ErrorKind::AlreadyExists))
                 }
 
                 fs::symlink(source, target)?;

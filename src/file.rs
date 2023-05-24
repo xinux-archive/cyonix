@@ -1,6 +1,7 @@
+use std::fs;
 use std::fs::{File, OpenOptions, create_dir_all};
-use std::io::{BufWriter, Write};
-use std::path::PathBuf;
+use std::io::{BufWriter, ErrorKind, Write};
+use std::path::{Path, PathBuf};
 use crate::config::{CONFIG, FILE, PATHWAY, STORAGE};
 use crate::error::CyonixError;
 
@@ -24,7 +25,18 @@ impl Files {
         self.home.join(PATHWAY).join(FILE)
     }
 
+    pub fn validate_file(&self, file: &str) -> Result<(), CyonixError> {
+        if !Path::new(file).exists(){
+            return Err(CyonixError::CustomError(ErrorKind::NotFound))
+        }
+        if !fs::metadata(file)?.is_file(){
+            return Err(CyonixError::SpecificError(format!("{} is not a file", file)))
+        }
+        Ok(())
+    }
+
     pub fn write_to_list(&self, file: &str) -> Result<(), CyonixError>{
+        self.validate_file(file)?;
         let file_list = self.find_filelist();
         let file_location = format!(" ~/{}/{}\n", CONFIG, file);
 
@@ -75,5 +87,4 @@ impl Files {
         }
         Ok(())
     }
-
 }
