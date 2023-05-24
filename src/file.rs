@@ -38,19 +38,26 @@ impl Files {
     pub fn write_to_list(&self, file: &str) -> Result<(), CyonixError>{
         self.validate_file(file)?;
         let file_list = self.find_filelist();
-        let file_location = format!(" ~/{}/{}\n", CONFIG, file);
+
+        let collection: Vec<&str> = file.split('/')
+                                       .filter(|f| !f.is_empty())
+                                       .collect();
+
+        let file_name = collection.last().unwrap();
 
         if !file_list.exists(){
            File::create(&file_list)?;
         }
+
 
         let opened_file = OpenOptions::new()
             .append(true)
             .open(file_list)?;
 
         let mut writer = BufWriter::new(opened_file);
+        writer.write_all(file_name.as_bytes())?;
+        writer.write_all(b" ")?;
         writer.write_all(file.as_bytes())?;
-        writer.write_all(file_location.as_bytes())?;
         writer.flush()?;
 
         Ok(())
