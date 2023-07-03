@@ -4,6 +4,7 @@ use std::io::{BufWriter, ErrorKind, Write};
 use std::path::{Path, PathBuf};
 use crate::config::{CONFIG, FILE, PATHWAY, STORAGE};
 use crate::error::CyonixError;
+use walkdir::WalkDir;
 
 #[derive(Debug)]
 pub struct Files {
@@ -35,20 +36,34 @@ impl Files {
         Ok(())
     }
 
+    pub fn copy_recursively<P: AsRef<Path>>(&self, src: P, dest: P) -> Result<(), CyonixError> {
+        for entry in WalkDir::new(src.as_ref()){
+            let entry = entry.unwrap();
+            let path = entry.path();
+            let mut new_path = dest.as_ref().to_path_buf();
+            new_path.push(path.strip_prefix(src.as_ref()).unwrap());
+            if path.is_dir() {
+                fs::create_dir_all(new_path)?;
+            } else {
+                fs::copy(path, new_path)?;
+            }
+        }
+        Ok(())
+    }
+
     pub fn write_to_list(&self, file: &str) -> Result<(), CyonixError>{
         self.validate_file(file)?;
         let file_list = self.find_filelist();
 
         let collection: Vec<&str> = file.split('/')
-                                       .filter(|f| !f.is_empty())
-                                       .collect();
+                                        .filter(|f| !f.is_empty())
+                                        .collect();
 
-        let file_name = collection.last().unwrap();
+        let file_name = collection.last().unwrap_or(&"Oops, failed to write the file :(");
 
         if !file_list.exists(){
            File::create(&file_list)?;
         }
-
 
         let opened_file = OpenOptions::new()
             .append(true)
@@ -58,6 +73,7 @@ impl Files {
         writer.write_all(file_name.as_bytes())?;
         writer.write_all(b" ")?;
         writer.write_all(file.as_bytes())?;
+        writer.write_all(b"\n")?;
         writer.flush()?;
 
         Ok(())
@@ -76,13 +92,13 @@ impl Files {
         self.create_dirs()?;
         self.write_to_list(file)?;
 
-        let config_path = self.home.join(CONFIG).join(file);
         let storage_path =  self.find_storage().join(file);
+        let storage_string = storage_path
+            .to_str()
+            .unwrap_or("Oops, failed to resolve path into string :(");
 
-        if config_path.exists() {
-            std::fs::copy(&config_path, storage_path)?;
-            std::fs::remove_file(&config_path)?;
-        }
+        self.copy_recursively(file, storage_string)?;
+
         Ok(())
     }
 
